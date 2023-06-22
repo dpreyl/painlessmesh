@@ -9,7 +9,7 @@
 
 #if defined(ESP32) || defined(ESP8266)
 #ifdef ESP32
-#include <SPIFFS.h>
+#include <LittleFS.h>
 #include <Update.h>
 #else
 #include <LittleFS.h>
@@ -312,9 +312,9 @@ void addReceivePackageCallback(Scheduler& scheduler, plugin::PackageHandler<T>& 
   auto updateFW = std::make_shared<State>();
   updateFW->role = role;
 #ifdef ESP32
-  SPIFFS.begin(true);  // Start the SPI Flash Files System
-  if (SPIFFS.exists(currentFW->ota_fn)) {
-  auto file = SPIFFS.open(currentFW->ota_fn, "r");
+  LittleFS.begin(true);  // Start the SPI Flash Files System
+  if (LittleFS.exists(currentFW->ota_fn)) {
+  auto file = LittleFS.open(currentFW->ota_fn, "r");
 #else
   LittleFS.begin();  // Start the SPI Flash Files System
   if (LittleFS.exists(currentFW->ota_fn)) {
@@ -408,7 +408,7 @@ void addReceivePackageCallback(Scheduler& scheduler, plugin::PackageHandler<T>& 
         if (Update.end(true)) {  // true to set the size to the
                                  // current progress
         #ifdef ESP32                   
-          auto file = SPIFFS.open(updateFW->ota_fn, "w");
+          auto file = LittleFS.open(updateFW->ota_fn, "w");
           if (!file) {
             Log(ERROR, "handleOTA(): Unable to write md5 of new update to the SPIFFS file. This will result in endless update loops for OTA\n");
           }
